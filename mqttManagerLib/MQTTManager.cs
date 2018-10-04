@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace mqttConsole
+namespace MQTTManagerLib
 {
     /// <summary>
     /// Based on MQTT Server : https://www.cloudmqtt.com/docs-dotnet.html
