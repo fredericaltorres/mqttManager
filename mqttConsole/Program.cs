@@ -6,14 +6,11 @@ namespace Sample
 {
     class Program
     {
-
-        static bool MustPublish = false;
-
         static void Main(string[] args)
         {
             string connectionString = "tcp://m15.cloudmqtt.com:10989";
-            string username = "lvyugmmd";
-            string password = "9rqYbUiLLY2s";
+            string username = "user1";
+            string password = "user1";
             const string channel = "/home/temperature" ;
 
             Console.WriteLine("Starting MqttDotNet sample program.");
@@ -28,7 +25,6 @@ namespace Sample
                     {
                         mqttManager.Publish(channel, $"[${i.ToString("000")}]Yes it is working... source-computer:${Environment.MachineName}");
                     }
-                    
                 }
                 else
                 {

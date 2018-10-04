@@ -15,4 +15,14 @@ Non secure connection string
 ```
 	connectionString = "tcp://m15.cloudmqtt.com:10989";
 ```
-[doc](https://www.cloudmqtt.com/docs-dotnet.html)
+[Cloudmqtt Documentation](https://www.cloudmqtt.com/docs-dotnet.html)
+
+
+## Cloudmqtt Authorization
+
+* http basic auth: username:empty, password:api-key
+* https://docs.cloudmqtt.com/cloudmqtt_api.html?shell#
+
+get list of user
+	https://api.cloudmqtt.com/api/user
+https://api.cloudmqtt.com/api/user/user1
