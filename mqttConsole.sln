@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mqttConsole", "mqttConsole\mqttConsole.csproj", "{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mqttManagerLib", "mqttManagerLib\mqttManagerLib.csproj", "{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Debug|x86.Build.0 = Debug|Any CPU
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Release|x86.ActiveCfg = Release|Any CPU
+		{39423A96-90BC-46DD-8ABD-0C0A37F8CFF0}.Release|x86.Build.0 = Release|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Release|x86.ActiveCfg = Release|Any CPU
+		{7D6192F0-D38A-4AF0-AE9C-0FC61F4A43C3}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1B1293B7-86DD-455F-BAB2-602F28C1821E}
+	EndGlobalSection
+EndGlobal
