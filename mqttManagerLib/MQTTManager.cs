@@ -7,6 +7,29 @@ using System.Threading.Tasks;
 
 namespace MQTTManagerLib
 {
+    public class MQTTMessage {
+
+        public string ClientID;
+        public string Message;
+        public string Topic;
+        public static MQTTMessage Parse(string rawMessage, string topic)
+        {
+            var m = new MQTTMessage();
+            m.Topic = topic;
+            var values = rawMessage.Split('|');
+            if(values.Length == 2)
+            {
+                m.ClientID = values[0];
+                m.Message = values[1];
+            }
+            else
+            {
+                m.Message = rawMessage;
+            }
+            return m;
+        }
+    }
+
     /// <summary>
     /// Based on MQTT Server : https://www.cloudmqtt.com/docs-dotnet.html
     /// Mqtt lib : https://github.com/stevenlovegrove/MqttDotNet
@@ -18,7 +41,7 @@ namespace MQTTManagerLib
         private IMqtt _client;
 
         public delegate void NotificationEventType(string message);
-        public delegate void MessageArrivedType(PublishArrivedArgs message);
+        public delegate void MessageArrivedType(MQTTMessage message);
         public event NotificationEventType NotificationEvent;
         public event MessageArrivedType MessageArrived;
 
@@ -36,6 +59,12 @@ namespace MQTTManagerLib
             this._client.Connected += new ConnectionDelegate(client_Connected);
             this._client.ConnectionLost += new ConnectionDelegate(_client_ConnectionLost);
             this._client.PublishArrived += new PublishArrivedDelegate(client_PublishArrived);
+        }
+
+        public static string BuildClientId()
+        {
+            var g = Guid.NewGuid().ToString().Split('-');
+            return $"{Environment.MachineName}-{g[0]}";
         }
 
         public void Start()
@@ -59,26 +88,6 @@ namespace MQTTManagerLib
             this._client.Subscribe(channel, QoS.BestEfforts);
         }
 
-        public class MQTTMessage {
-            public string ClientID;
-            public string Message;
-            public static MQTTMessage Parse(string rawMessage)
-            {
-                var m = new MQTTMessage();
-                var values = rawMessage.Split('|');
-                if(values.Length == 2)
-                {
-                    m.ClientID = values[0];
-                    m.Message = values[1];
-                }
-                else
-                {
-                    m.Message = rawMessage;
-                }
-                return m;
-            }
-        }
-
         private string BuildMessage(string message)
         {
             return $"{this._clientId}|{message}";
@@ -99,7 +108,8 @@ namespace MQTTManagerLib
         }
         bool client_PublishArrived(object sender, PublishArrivedArgs e)
         {
-            var m = MQTTMessage.Parse(e.Payload.ToString());
+            var m = MQTTMessage.Parse(e.Payload.ToString(), e.Topic);
+            
             if(m.ClientID == this._clientId)
             {
                 // Ignore message sent by this instance
@@ -107,7 +117,7 @@ namespace MQTTManagerLib
             }
             else {
                 if(this.MessageArrived != null)
-                    this.MessageArrived(e);
+                    this.MessageArrived(m);
                 return true;
             }
         }

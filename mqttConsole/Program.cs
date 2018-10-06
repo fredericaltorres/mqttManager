@@ -13,8 +13,10 @@ namespace Sample
             string password = "";
             const string channel = "/home/temperature" ;
 
-            Console.WriteLine("Starting MqttDotNet sample program.");
-            using(var mqttManager = new MQTTManager(connectionString, Guid.NewGuid().ToString(), username, password))
+            var clientId = MQTTManager.BuildClientId();
+            Console.WriteLine($"Starting mqttManager Console, clientId:{clientId}");
+
+            using(var mqttManager = new MQTTManager(connectionString, clientId, username, password))
             {
                 mqttManager.NotificationEvent += MqttManager_NotificationEvent;
                 mqttManager.MessageArrived += MqttManager_MessageArrived;
@@ -42,9 +44,9 @@ namespace Sample
             }
         }
 
-        private static void MqttManager_MessageArrived(PublishArrivedArgs message)
+        private static void MqttManager_MessageArrived(MQTTMessage message)
         {
-            Console.WriteLine($"Message Arrived {message.Topic}, {message.Payload}, {message.QualityOfService}");
+            Console.WriteLine($"Message Arrived {message.Message}, {message.ClientID}, {message.Topic}");
         }
 
         private static void MqttManager_NotificationEvent(string message)
