@@ -59,9 +59,34 @@ namespace MQTTManagerLib
             this._client.Subscribe(channel, QoS.BestEfforts);
         }
 
+        public class MQTTMessage {
+            public string ClientID;
+            public string Message;
+            public static MQTTMessage Parse(string rawMessage)
+            {
+                var m = new MQTTMessage();
+                var values = rawMessage.Split('|');
+                if(values.Length == 2)
+                {
+                    m.ClientID = values[0];
+                    m.Message = values[1];
+                }
+                else
+                {
+                    m.Message = rawMessage;
+                }
+                return m;
+            }
+        }
+
+        private string BuildMessage(string message)
+        {
+            return $"{this._clientId}|{message}";
+        }
+
         public void Publish(string channel, string message)
         {
-            this._client.Publish(channel, message, QoS.BestEfforts, false);
+            this._client.Publish(channel, BuildMessage(message), QoS.BestEfforts, false);
         }
 
         void client_Connected(object sender, EventArgs e)
@@ -74,11 +99,18 @@ namespace MQTTManagerLib
         }
         bool client_PublishArrived(object sender, PublishArrivedArgs e)
         {
-            if(this.MessageArrived != null)
-                this.MessageArrived(e);
-            return true;
+            var m = MQTTMessage.Parse(e.Payload.ToString());
+            if(m.ClientID == this._clientId)
+            {
+                // Ignore message sent by this instance
+                return false;
+            }
+            else {
+                if(this.MessageArrived != null)
+                    this.MessageArrived(e);
+                return true;
+            }
         }
-
         public void Dispose()
         {
             this.Stop();
