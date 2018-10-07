@@ -10,8 +10,8 @@ namespace Sample
         {
             string connectionString = "tcp://m15.cloudmqtt.com:10989";
             string username = "user1";
-            string password = "";
-            const string channel = "/home/temperature" ;
+            string password = "user1";
+            const string channel = "/frederictorres/iotdashboard";
 
             var clientId = MQTTManager.BuildClientId();
             Console.WriteLine($"Starting mqttManager Console, clientId:{clientId}");
@@ -34,9 +34,10 @@ namespace Sample
                 }
                 while(true)
                 {
-                    Console.WriteLine("Q)uit, S)end");
-                    var k = Console.ReadKey();
+                    Console.WriteLine("Q)uit, S)end, C)lear");
+                    var k = Console.ReadKey(true);
                     if(k.Key == ConsoleKey.Q) break;
+                    if(k.Key == ConsoleKey.C) Console.Clear();
                     if(k.Key == ConsoleKey.S) {
                         mqttManager.Publish(channel, $"[{Environment.MachineName}, {Environment.TickCount}]Working...");
                     }

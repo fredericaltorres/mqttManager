@@ -1,11 +1,16 @@
 /*
     mqttManager.js a wrapper/helper around MQTT.js for browser.
-    Developed to work with MQTT broker from CloudMqtt.com.
+    - Developed to work with MQTT broker from CloudMqtt.com.
+    - Tested in 
+        - Chrome Windows and Chrome iOS.
+        - Edge and IE 11 Windows.
 
     Dependencies:
-    mqtt.js
+    - mqtt.js
         https://github.com/mqttjs/MQTT.js
         c:\>npm install mqtt --save
+
+    Frederic Torres 2018.10
  */
 var mqtt = require('mqtt');
 
@@ -13,12 +18,12 @@ const WEB_SOCKET_DEFAULT_PORT = 30989;
 
 class MqttManager {
 
-    _client  = null;
+    _client = null;
     _options = null;
 
     constructor(mqttUrl, username, password, webSocketPort = WEB_SOCKET_DEFAULT_PORT, clientId) {
 
-        if(!clientId)
+        if (!clientId)
             clientId = 'mqttManager.js_' + Math.random().toString(16).substr(2, 8);
 
         this._options = {
@@ -40,37 +45,36 @@ class MqttManager {
         console.log(`[MqttMgr]${m}`);
     }
     parseMessage(rawMessage, topic) {
-        const values = (""+rawMessage).split('|');
-        if(values.length === 2) {
-            return { clientId: values[0], message : values[1], topic };
+        const values = ("" + rawMessage).split('|');
+        if (values.length === 2) {
+            return { clientId: values[0], message: values[1], topic };
         }
         else {
-            return { message : rawMessage, topic };
+            return { clientId: undefined, message: "" + rawMessage, topic };
         }
     }
     onReceivedMessage = (topic, message) => {
         const parsedMessage = this.parseMessage(message, topic);
-        if(parsedMessage.clientId === this._options.clientId) {
+        if (parsedMessage.clientId === this._options.clientId) {
             return; // ignore message sent by this instance
         }
         this.trace(`RECEIVED:${parsedMessage.message}, ${parsedMessage.clientId}, ${parsedMessage.topic}`);
-        if(this.messageArrived) {
+        if (this.messageArrived) {
             this.messageArrived(parsedMessage);
         }
     }
-    subscribe(channel)
-    {
-        return new Promise( (resolve, reject) => {
+    subscribe(channel) {
+        return new Promise((resolve, reject) => {
             this.trace(`Subscribe ${channel}`);
             this._client.subscribe(channel, (err) => {
-                if(err) {
+                if (err) {
                     console.log(`Subscribe err:${err}`);
                     reject(channel);
                 }
                 else {
                     this.trace(`Subscribed ${channel}`);
                     this._client.on('message', this.onReceivedMessage);
-                    resolve(channel);                    
+                    resolve(channel);
                 }
             });
         });
@@ -78,13 +82,12 @@ class MqttManager {
     buildMessage(message) {
         return `${this._options.clientId}|${message}`;
     }
-    publish(channel, message)
-    {
-        return new Promise( (resolve, reject) => {
+    publish(channel, message) {
+        return new Promise((resolve, reject) => {
             this.trace(`Publishing message:${message}`);
             // https://github.com/mqttjs/MQTT.js#publish
             this._client.publish(channel, this.buildMessage(message), undefined, (err) => {
-                if(err) {
+                if (err) {
                     this.trace(`Publishing failed message:${message}`);
                     reject(message);
                 }
@@ -95,14 +98,14 @@ class MqttManager {
         });
     }
     start() {
-        return new Promise( (resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
-            const optionsOkToTrace = Object.assign({password:'ok'}, this._options);
+            const optionsOkToTrace = Object.assign({ password: 'ok' }, this._options);
             optionsOkToTrace.password = null;
             this.trace(`Connecting options:${JSON.stringify(optionsOkToTrace)}`);
 
             this._client = mqtt.connect(this._options.host, this._options);
-        
+
             this._client.on('error', (err) => {
                 console.log(err);
                 reject(false);

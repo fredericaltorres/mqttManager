@@ -8,16 +8,21 @@ The MQTTManagerLib.MQTTManager is a helper class to publish or listen to MQTT ch
 
 ## MQTT Library
 
+### .NET
+
 MqttDotNet by stevenlovegrove
 
 [Mqtt lib](https://github.com/stevenlovegrove/MqttDotNet)
 
+### JavaScript 
+[mqtt.js](https://github.com/mqttjs/MQTT.js)
+        
 ## MQTT Provider
 
 The company cloudmqtt.com can be used to create an free MQTT server
-Non secure connection string
-```
-	connectionString = "tcp://m15.cloudmqtt.com:10989";
+Non secured connection string
+```cs
+	var connectionString = "tcp://m15.cloudmqtt.com:10989";
 ```
 [Cloudmqtt Documentation](https://www.cloudmqtt.com/docs-dotnet.html)
 

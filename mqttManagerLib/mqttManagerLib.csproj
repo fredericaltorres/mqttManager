@@ -51,5 +51,8 @@
       <Link>README.md</Link>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="JavaScript\mqttManager.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
