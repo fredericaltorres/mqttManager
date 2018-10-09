@@ -7,29 +7,6 @@ using System.Threading.Tasks;
 
 namespace MQTTManagerLib
 {
-    public class MQTTMessage {
-
-        public string ClientID;
-        public string Message;
-        public string Topic;
-        public static MQTTMessage Parse(string rawMessage, string topic)
-        {
-            var m = new MQTTMessage();
-            m.Topic = topic;
-            var values = rawMessage.Split('|');
-            if(values.Length == 2)
-            {
-                m.ClientID = values[0];
-                m.Message = values[1];
-            }
-            else
-            {
-                m.Message = rawMessage;
-            }
-            return m;
-        }
-    }
-
     /// <summary>
     /// Based on MQTT Server : https://www.cloudmqtt.com/docs-dotnet.html
     /// Mqtt lib : https://github.com/stevenlovegrove/MqttDotNet
@@ -67,10 +44,11 @@ namespace MQTTManagerLib
             return $"{Environment.MachineName}-{g[0]}";
         }
 
-        public void Start()
+        public void Start(string channel)
         {
             Notify("Client connecting");
             this._client.Connect(true);
+            this.Publish(channel, $"New console instance connected");
         }
 
         public void Stop()
@@ -82,22 +60,24 @@ namespace MQTTManagerLib
                 this.Notify("Client disconnected");
             }
         }
-
         public void Subscribe(string channel)
         {
-            this._client.Subscribe(channel, QoS.BestEfforts);
+            var r = this._client.Subscribe(channel, QoS.BestEfforts);
+            this.Notify($"Client Subscribed '{channel}'");
         }
-
-        private string BuildMessage(string message)
+        private string BuildMessage(string message, string topic)
         {
-            return $"{this._clientId}|{message}";
+            var m = new MQTTMessage() {
+                Message = message,
+                ClientId = this._clientId,
+                Topic = topic
+            };
+            return m.ToJSON();
         }
-
         public void Publish(string channel, string message)
         {
-            this._client.Publish(channel, BuildMessage(message), QoS.BestEfforts, false);
+            this._client.Publish(channel, BuildMessage(message, channel), QoS.BestEfforts, false);
         }
-
         void client_Connected(object sender, EventArgs e)
         {
             this.Notify("Client connected");
@@ -109,8 +89,7 @@ namespace MQTTManagerLib
         bool client_PublishArrived(object sender, PublishArrivedArgs e)
         {
             var m = MQTTMessage.Parse(e.Payload.ToString(), e.Topic);
-            
-            if(m.ClientID == this._clientId)
+            if(m.ClientId == this._clientId)
             {
                 // Ignore message sent by this instance
                 return false;

@@ -45,13 +45,10 @@ class MqttManager {
         console.log(`[MqttMgr]${m}`);
     }
     parseMessage(rawMessage, topic) {
-        const values = ("" + rawMessage).split('|');
-        if (values.length === 2) {
-            return { clientId: values[0], message: values[1], topic };
-        }
-        else {
-            return { clientId: undefined, message: "" + rawMessage, topic };
-        }
+        const o = JSON.parse(rawMessage);
+        const oo = { ...o, topic };
+        console.log('PARSE MESSAGE', JSON.stringify(oo));
+        return oo;
     }
     onReceivedMessage = (topic, message) => {
         const parsedMessage = this.parseMessage(message, topic);
@@ -80,7 +77,9 @@ class MqttManager {
         });
     }
     buildMessage(message) {
-        return `${this._options.clientId}|${message}`;
+        const s = JSON.stringify({ message, clientId: this._options.clientId });
+        console.log('BUILD MESSAGE', s);
+        return s;
     }
     publish(channel, message) {
         return new Promise((resolve, reject) => {

@@ -20,18 +20,8 @@ namespace Sample
             {
                 mqttManager.NotificationEvent += MqttManager_NotificationEvent;
                 mqttManager.MessageArrived += MqttManager_MessageArrived;
-                mqttManager.Start();
-                if(args.Length == 1)
-                {
-                    for(var i=0; i<2; i++)
-                    {
-                        mqttManager.Publish(channel, $"[${i.ToString("000")}]Yes it is working... source-computer:${Environment.MachineName}");
-                    }
-                }
-                else
-                {
-                    mqttManager.Subscribe(channel);
-                }
+                mqttManager.Start(channel);
+                mqttManager.Subscribe(channel);
                 while(true)
                 {
                     Console.WriteLine("Q)uit, S)end, C)lear");
@@ -47,7 +37,7 @@ namespace Sample
 
         private static void MqttManager_MessageArrived(MQTTMessage message)
         {
-            Console.WriteLine($"Message Arrived {message.Message}, {message.ClientID}, {message.Topic}");
+            Console.WriteLine($"Message Arrived {message.Message}, {message.ClientId}, {message.Topic}");
         }
 
         private static void MqttManager_NotificationEvent(string message)
