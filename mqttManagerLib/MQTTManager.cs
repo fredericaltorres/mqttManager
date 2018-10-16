@@ -47,8 +47,7 @@ namespace MQTTManagerLib
         public void Start(string channel)
         {
             Notify("Client connecting");
-            this._client.Connect(true);
-            this.Publish(channel, $"New console instance connected");
+            this._client.Connect(true);            
         }
 
         public void Stop()

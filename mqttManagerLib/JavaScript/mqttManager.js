@@ -20,6 +20,11 @@ class MqttManager {
 
     _client = null;
     _options = null;
+    connected = false;
+
+    static generateNewClientId() {
+        return Math.random().toString(16).substr(2, 4);
+    }
 
     constructor(mqttUrl, username, password, webSocketPort = WEB_SOCKET_DEFAULT_PORT, clientId) {
 
@@ -41,13 +46,19 @@ class MqttManager {
             encoding: 'utf8'
         };
     }
+    isClientId(clientId) {
+        return clientId === this._options.clientId;
+    }
+    getClientId() {
+        return this._options.clientId;
+    }
     trace(m) {
         console.log(`[MqttMgr]${m}`);
     }
     parseMessage(rawMessage, topic) {
         const o = JSON.parse(rawMessage);
         const oo = { ...o, topic };
-        console.log('PARSE MESSAGE', JSON.stringify(oo));
+        // console.log('PARSE MESSAGE', JSON.stringify(oo));
         return oo;
     }
     onReceivedMessage = (topic, message) => {
@@ -55,8 +66,12 @@ class MqttManager {
         if (parsedMessage.clientId === this._options.clientId) {
             return; // ignore message sent by this instance
         }
-        this.trace(`RECEIVED:${parsedMessage.message}, ${parsedMessage.clientId}, ${parsedMessage.topic}`);
+        this.trace(`${parsedMessage.message}, ${parsedMessage.clientId}, ${parsedMessage.topic}`);
         if (this.messageArrived) {
+
+            if (parsedMessage.message.startsWith("@@@")) // internal notification
+                return;
+
             this.messageArrived(parsedMessage);
         }
     }
@@ -77,7 +92,8 @@ class MqttManager {
         });
     }
     buildMessage(message) {
-        const s = JSON.stringify({ message, clientId: this._options.clientId });
+        const o = { message, clientId: this._options.clientId };
+        const s = JSON.stringify(o);
         console.log('BUILD MESSAGE', s);
         return s;
     }
@@ -110,13 +126,16 @@ class MqttManager {
                 reject(false);
             });
             this._client.on('connect', () => {
-                this.trace(`MQTT Connected to ${this._options.host}`);
+                this.trace(`MQTT Connected to ${this._options.host}, clientId:${this._options.clientId}`);
+                this.connected = true;
                 resolve(true);
             });
         });
     }
     stop() {
-
+        this._client.end(true); // https://github.com/mqttjs/MQTT.js#end
+        this.connected = false;
+        this.trace(`MqttManager instance clientId:${this._options.clientId} stopped`);
     }
 }
 
